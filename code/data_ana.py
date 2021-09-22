@@ -94,16 +94,19 @@ labels = [0 for _ in range(8)]
 
 power_ratio_cuts = [np.quantile(power_ratio["FISH_RATIO"], 0.5), np.quantile(power_ratio["CO2EQ"], 0.5)]
 
+print (power_ratio_cuts)
+print (power_ratio["FISH_RATIO"][:20])
+
 def get_ratio_label(a, b, cuts):
     a = 1 if b >= cuts[0] else 0
     b = 0 if b >= cuts[1] else 1
-    return (1 << a) + b;
+    return (2 * a) + b;
 
 def get_label(a, b, c, cuts):
     a = 1 if a >= cuts[0] else 0
     b = 1 if b >= cuts[1] else 0
     c = 0 if b >= cuts[2] else 1
-    return (1 << (a * 2)) + (1 << b) + c
+    return (2 * 2 * a) + (2 * b) + c
 
 print ("total power dam: ", power_cnt)
 print ("usable power dam: ", len(power_sep["GEN_GWH_YR"]))
@@ -148,7 +151,7 @@ tot = len(power_ratio["CO2EQ"])
 for i in range(4):
     print ("other ratio label: %d, percetange: %.3f" % (i, labels[i] / tot))
 
-#exit(-1)
+exit(-1)
 
 # Start generateing datafile for training the power dam
 
