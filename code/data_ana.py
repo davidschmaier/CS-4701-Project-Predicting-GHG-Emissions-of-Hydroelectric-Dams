@@ -148,7 +148,7 @@ tot = len(power_ratio["CO2EQ"])
 for i in range(4):
     print ("other ratio label: %d, percetange: %.3f" % (i, labels[i] / tot))
 
-exit(-1)
+#exit(-1)
 
 # Start generateing datafile for training the power dam
 
@@ -187,7 +187,7 @@ def useful(feature):
     if feature == "GRAND_ID" or feature == "DAM_NAME" or feature == "MAIN_BASIN" or feature == "SUB_BASIN" or feature == "NEAR_CITY" or feature == "COUNTRY" or feature == "SEC_CNTRY" or feature == "YEAR" or feature == "REM_YEAR" or feature[:4] == "USE_" or feature == "MAIN_USE" or feature == "LAKE_CTRL" or feature == "LONG_DD" or feature == "LAT_DD" or feature == "COUNTRY_1":
         return 0
     # debating features
-    if feature == "LAT_KEY\n":
+    if feature == "LAT_KEY\n" or feature[:5] == "pred_":
         return 0
     # too many NA
     if feature == "INSCAP_MW":
