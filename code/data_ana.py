@@ -98,14 +98,14 @@ print (power_ratio_cuts)
 print (power_ratio["FISH_RATIO"][:20])
 
 def get_ratio_label(a, b, cuts):
-    a = 1 if b >= cuts[0] else 0
+    a = 1 if a >= cuts[0] else 0
     b = 0 if b >= cuts[1] else 1
     return (2 * a) + b;
 
 def get_label(a, b, c, cuts):
     a = 1 if a >= cuts[0] else 0
     b = 1 if b >= cuts[1] else 0
-    c = 0 if b >= cuts[2] else 1
+    c = 0 if c >= cuts[2] else 1
     return (2 * 2 * a) + (2 * b) + c
 
 print ("total power dam: ", power_cnt)
@@ -151,7 +151,7 @@ tot = len(power_ratio["CO2EQ"])
 for i in range(4):
     print ("other ratio label: %d, percetange: %.3f" % (i, labels[i] / tot))
 
-exit(-1)
+#exit(-1)
 
 # Start generateing datafile for training the power dam
 
@@ -165,22 +165,10 @@ other_dam_labels = []
 other_ratio_dam_labels = []
 
 def convert_ratio_label(l):
-    if (l == 1):
-        return 0
-    if (l == 2):
-        return 1
-    raise ValueError("Invalid label")
+    return l
 
 def convert_label(l):
-    if (l == 3):
-        return 0
-    if (l == 4):
-        return 1
-    if (l == 6):
-        return 2
-    if (l == 7):
-        return 3
-    raise ValueError("Invalid label")
+    return l
 
 def useful(feature):
     # Label cannot be used in feature
