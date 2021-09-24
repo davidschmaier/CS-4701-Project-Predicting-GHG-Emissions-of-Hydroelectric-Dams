@@ -251,17 +251,18 @@ for i in range(tot_data):
         continue
     else:
         try:
-            no_missing += 1
             a, b, c = (float(data_map["CAP_MCM"][i]), float(data_map["RES_BAL"][i]), float(data_map["CO2EQ_total"][i]))
-            aa, bb = float(data_map["RES_BAL"][i]) / float(data_map["GEN_GWH_YR"][i]), float(data_map["CO2EQ_total"][i]) / float(data_map["GEN_GWH_YR"][i])
+            aa, bb = float(data_map["RES_BAL"][i]) / float(data_map["CAP_MCM"][i]), float(data_map["CO2EQ_total"][i]) / float(data_map["CAP_MCM"][i])
             other_dam_features.append(np.array(tmp_features))
             other_ratio_dam_features.append(np.array(tmp_features))
             other_dam_labels.append(convert_label(get_label(a, b, c, other_cuts)))
             other_ratio_dam_labels.append(convert_ratio_label(get_ratio_label(aa, bb, other_ratio_cuts)))
+            no_missing += 1
         except:
             pass
 
 print ("no missing: ", no_missing, "total_data: ", tot)
+print (len(other_ratio_dam_features))
 
 other_dam_save = (other_dam_features, other_dam_labels)
 pickle.dump(other_dam_save, open("test_other_dam_data.pkl", "wb"))
