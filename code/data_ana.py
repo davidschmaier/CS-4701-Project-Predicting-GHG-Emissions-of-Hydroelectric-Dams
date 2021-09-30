@@ -164,6 +164,9 @@ other_ratio_dam_features = []
 other_dam_labels = []
 other_ratio_dam_labels = []
 
+power_unsup_ratio_dam_features = []
+other_unsup_ratio_dam_features = []
+
 def convert_ratio_label(l):
     return l
 
@@ -186,19 +189,21 @@ def useful(feature):
     return 1
 
 def process(feature, value):
-    if value == "NA":
+    if value == "NA" or value == "":
         return None
     return value
 
 tot = 0
+unsup_tot = 0
 no_missing = 0
+names = []
 for i in range(tot_data):
     if data_map["MAIN_USE"][i] != use_name:
         continue
     tot += 1
     tmp_features = []
-    names = []
     na = 0
+    names = []
     for idx, feature in enumerate(feature_name):
         if useful(feature):
             #print (feature, " ", data_map[feature][i], " ", data_map["DAM_NAME"][i])
@@ -219,10 +224,14 @@ for i in range(tot_data):
             power_ratio_dam_features.append(np.array(tmp_features))
             power_dam_labels.append(convert_label(get_label(a, b, c, power_cuts)))
             power_ratio_dam_labels.append(convert_ratio_label(get_ratio_label(aa, bb, power_ratio_cuts)))
+            power_unsup_ratio_dam_features.append(np.array(tmp_features))
         except:
+            unsup_tot += 1
+            power_unsup_ratio_dam_features.append(np.array(tmp_features))
             continue
-
-print ("no missing: ", no_missing, " total data: ", tot)
+print ("used features: ", names)
+print (len(names))
+print ("no missing: ", no_missing, "unsup_tot: ", unsup_tot, " total data: ", tot)
 print (power_dam_features[0])
 print (power_dam_labels)
 
@@ -230,8 +239,10 @@ power_dam_save = (power_dam_features, power_dam_labels)
 pickle.dump(power_dam_save, open("test_power_dam_data.pkl", "wb"))
 power_ratio_dam_save = (power_ratio_dam_features, power_ratio_dam_labels)
 pickle.dump(power_ratio_dam_save, open("test_power_ratio_dam_data.pkl", "wb"))
+pickle.dump(power_unsup_ratio_dam_features, open("test_power_ratio_unsup_dam_data.pkl", "wb"))
 
 tot = 0
+unsup_tot = 0
 no_missing = 0
 for i in range(tot_data):
     if data_map["MAIN_USE"][i] == use_name:
@@ -257,17 +268,21 @@ for i in range(tot_data):
             other_ratio_dam_features.append(np.array(tmp_features))
             other_dam_labels.append(convert_label(get_label(a, b, c, other_cuts)))
             other_ratio_dam_labels.append(convert_ratio_label(get_ratio_label(aa, bb, other_ratio_cuts)))
+            other_unsup_ratio_dam_features.append(np.array(tmp_features))
             no_missing += 1
         except:
+            unsup_tot += 1
+            other_unsup_ratio_dam_features.append(np.array(tmp_features))
             pass
 
-print ("no missing: ", no_missing, "total_data: ", tot)
+print ("no missing: ", no_missing, "unsup_tot: ", unsup_tot, "total_data: ", tot)
 print (len(other_ratio_dam_features))
 
 other_dam_save = (other_dam_features, other_dam_labels)
 pickle.dump(other_dam_save, open("test_other_dam_data.pkl", "wb"))
 other_ratio_dam_save = (other_ratio_dam_features, other_ratio_dam_labels)
 pickle.dump(other_ratio_dam_save, open("test_other_ratio_dam_data.pkl", "wb"))
+pickle.dump(other_unsup_ratio_dam_features, open("test_other_ratio_unsup_dam_data.pkl", "wb"))
 
 
 

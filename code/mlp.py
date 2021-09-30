@@ -7,6 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import *
 import pickle
+from sklearn.model_selection import GridSearchCV
 
 class encoder(nn.Module):
 
@@ -52,14 +53,31 @@ if __name__ == "__main__":
     print ("features: ", features.shape, " ", "labels: ", labels.shape)
 
     X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=199666)
+    parameter_space = {
+                'hidden_layer_sizes': [(32), (64), (128), (256)],
+                'activation': ['relu'],
+                'solver': ['sgd', 'adam'],
+                'alpha': [0.0001, 0.05],
+                'learning_rate': ['constant','adaptive'],
+            }
 
-    clf = MLPClassifier(random_state=19999, max_iter=500).fit(X_train, y_train)
+    #clf = MLPClassifier(hidden_layer_sizes=(128), random_state=19999, max_iter=300, early_stopping=True).fit(X_train, y_train)
+    mlp = MLPClassifier(hidden_layer_sizes=(128), random_state=19999, max_iter=300, early_stopping=True)
+    clf = GridSearchCV(mlp, parameter_space, n_jobs=-1, cv=3) 
+    clf.fit(X_train, y_train)
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    print (means, " ", stds)
     print (clf.score(X_test, y_test))
+
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
     exit(-1)
 
+
     train_loader = DataLoader(DamDataset(X_train, y_train), batch_size=128, shuffle=True)
-    test_loader  = DataLoader(DamDataset(X_test, y_test), batch_size=32)
+    test_loader  = DataLoader(DamDataset(X_test, y_test), batch_size=128, shuffle=False)
 
     model = encoder(features.shape[1], 4)
     #model = model.cuda()
@@ -97,10 +115,9 @@ if __name__ == "__main__":
             with torch.no_grad():
                 logit = model(batch_x)
                 yhat = torch.argmax(logit, dim=1)
-                print ("yhat: ", yhat, " ", batch_y)
-                print ((yhat == batch_y).sum().item())
                 acc_test += (yhat == batch_y).sum().item()
                 tot_test += batch_x.size(0)
+        print ("total test data: ", tot_test)
         print ("test acc: ", acc_test / float(tot_test))
         model.train()
 
